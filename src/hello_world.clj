@@ -20,3 +20,25 @@
   "X is empty"
   "x is not empty"
   )
+
+(if (empty? x)
+  nil
+  (do
+    (println "Ok")
+    :ok))
+
+(if-not (empty? x)
+  (do
+    (println "Ok")
+    :ok))
+
+
+(when-not
+  (empty? x)
+  (println "Ok")
+  :ok)
+
+(case x
+  "Goodbye" :goodbye,
+  "Hi" :hello,
+  :nothing)
