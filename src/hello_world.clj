@@ -42,3 +42,10 @@
   "Goodbye" :goodbye,
   "Hi" :hello,
   :nothing)
+(cond
+  (= x "Goodby")
+  (= (reverse x) "hello")
+  :otherwise :nothing
+  )
+
+(fn [] "Hello")
