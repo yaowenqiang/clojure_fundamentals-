@@ -49,3 +49,9 @@
   )
 
 (fn [] "Hello")
+(def hello (fn [] "hello"))
+#(str "Hello")
+
+(defn hello [] "hello")
+(defn hello [name] (str "hello" name))
+(hello "myname")
