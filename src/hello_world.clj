@@ -55,3 +55,8 @@
 (defn hello [] "hello")
 (defn hello [name] (str "hello" name))
 (hello "myname")
+
+(defn hello "Greets a person named <name> with their <title>" [name title] (str "hello, " title " " name))
+
+(require '[clojure.repl :refer [doc]])
+[doc hello]
