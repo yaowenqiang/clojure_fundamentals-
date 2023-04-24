@@ -60,3 +60,12 @@
 
 (require '[clojure.repl :refer [doc]])
 [doc hello]
+
+(defn hello [& args]
+  (str "hello" (apply str args))
+  )
+
+(defn hello
+  ([] "hello")
+  ([name] (str "hello, " name))
+  )
