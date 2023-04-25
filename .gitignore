@@ -2,3 +2,4 @@
 .nrepl-port
 lib
 clojure_fundamentals.iml
+.DS_Store
