@@ -32,3 +32,25 @@
 + {:a 1 :b 2}          ; Map
 + #{alice jim bob}     ; Set
 
+## Metadata
+
+(with-meta [1 2 3 ] {:example true})
+;; => [1 2 3]
+
+(meta (with-meta [1 2 3] {:example true}))
+;; => {:example true}
+
+
+## Reader Macros
+
+| Reader Macro    | Expansion                   |
+|-----------------|-----------------------------|
+| 'foo            | (quote foo)                 |
+| #'foo           | (var foo)                   |
+| @foo            | (deref foo)                 |
+| #(+ % 5)        | fn([x] (+ x 5))             |
+| ^{:key val} foo | (with-meta foo {:key val})  |
+| ':key foo       | (with-meta foo {:key true}) | 
+
+
+> user => (doc when) ;; get help
