@@ -54,3 +54,68 @@
 
 
 > user => (doc when) ;; get help
+
+> (find-doc "sequence")
+> (apropos "sequence")
+> (apropos "map")
+> (source "take")
+> (dir "clojure.repo")
+> 
+
+
+## Leiningen Directory Structure
+
+
+| Path        | Purpose                     |
+|-------------|-----------------------------|
+| project.clj | Project/build config        |
+| classes     | Compiled bytecode           |
+| lib/        | Dependent JARs              |
+| public/     | HTML/CSS/JS files for web   |
+| src/        | Clojure source              |
+| test/       | Unit tests                  |
+
+
+## Maven Directory Structure
+
+
+| Path              | Purpose                     |
+|-------------------|-----------------------------|
+| pom.xml           | Project/build config        |
+| target/classes    | Compiled bytecode           |
+| ~/.m2/repository/ | Dependent JARs              |
+| src/main/clojure/ | Clojure source              |
+| src/test/clojure/ | Unit tests                  |
+
+
+## Functions
+
+> (fn [message] (print message))
+
+
+### Invoking Functions 
+
++ fn makes anonymous functions
++ invoke a function with fn itself in function position
+
+> (fn [message] (print message))
+### Invoking Functions 
+
++ fn makes anonymous functions
++ invoke a function with fn itself in function position
+
+
+(    (fn [message] (print message))
+    "hello world!"
+)
+
+
+### Naming Functions
+
++ fn makes anonymous functions
++ Store function in a named Var for later use
++ invoke as list with name in function position
+
+(def messenger (fn [msg] (print msg)))
+(defn messenger fn [msg] (print msg))
+(messenger "Hello world")
