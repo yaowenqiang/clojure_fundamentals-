@@ -117,5 +117,154 @@
 + invoke as list with name in function position
 
 (def messenger (fn [msg] (print msg)))
-(defn messenger fn [msg] (print msg))
+(defn messenger [msg] (print msg))
 (messenger "Hello world")
+
+## Let
+
++ let binds symbols to immutablevalues
+  + Values may be literals or expressions
++ Bound symbols are available in lexical scope
+
+
+(defn messenger [msg]
+ (let [
+    a 7
+    b 5
+    c (capitalize msg)]
+    (println a b c)
+ ); end of 'let' scop
+) ; end of function
+
+
+(let [x 10 y 20 ] + x y)
+
+
+### Multi-arity functions
+
++ Can overload function by arity
+  + Arity number of arguments
++ Each arity is a list([args*] body*)
++ One arity can invoke another
+
+
+
+(defn messenger
+;; no args, call self with default msg
+([] messenger "Hello World")
+;; one arg, print it
+([msg] (print msg))
+)
+
+(messenger)
+;; Hello world!
+(messenger "Hello class!")
+;; Hello class!
+
+### Variadic functions
+
++ Variadic function of indefinite arity
+  + Only one allowed when overloading on arity
++ &symbol in params
+  + Next param collects all remaining args
+  + Collected args represented as sequence
+
+
+(defn messenger [greeting & who]
+    (print greeting who))
+
+(messenger "Hello" "World" "class")
+;; Hello (world class)
+
+### Apply
+
++ Invokes functions on arguments
++ Final argument is a sequence
++ "Unpacks" remaining arguments from sequence
+
+(let [a 1
+      b 2
+      more '(3 4)]
+ (apply f a b more))
+
+ ;; this invokes (f 1 2 3 4)
+
+
+
+(defn messenger [greeting & who]
+    ;; apply gets args out of sequence
+    (apply print greeting who))
+
+(messenger "Hello" "World" "Class")
+
+(let [numbers '(1 2 3)]
+    (apply + numbers)
+)
+
+
+### Closures
+
++ fn 'closes' over surrounding lexical scope
+  + Creates a closure
++ closed over references persist beyound lexical scope
+
+
+
+(defn messenger-builder [greeting]
+    (fn [who] (print greeting who))) ;; closes over greeting
+
+;; greeting provided here, then goes out of scope
+
+(def hello-er (messenger-builder "Hello world"))
+
+;; greeting still available because hello-er is closure
+(hello-er "world!")
+;; Hello world!;
+
+
+### Invoking Java Code
+
+| Task          | java              | Clojure         |
+| ----          | ----              | ----            |
+| instantiation | new Widget("Foo") | (Widget. "Foo") |
+| Instance method | rnd.nextInt()| (.nextInt rndFoo") |
+| Instance field | object.field | (.-field object") |
+| Static method | Math.sqrt(25) | (Math/sqrt 25) |
+| Static field | Math.PI | (Math/PI) |
+
+
+### Chaining Access
+
+| Language          | Syntax        |
+| ----          | ----              |
+| Java | person.getAddress().getZipCode() |
+| Clojure | (.getZipCode (.getAddress person))|
+| Clojure Sugar |(.. person getAddress getZipCode) |
+| Static method | Math.sqrt(25) |
+| Static field | Math.PI |
+
+
+### Java Methods vs. Functions
+
++ Java methods are not Clojure functions
++ Can't store them, pass them as argument
++ Can wrap them in functions when necessary
+
+
+;; make a function to invoke .length on arg
+
+(fn [obj] (.length obj))
+
+
+
+### Terse fn reader macro
+
++ Terse form #() for short fns defined inline
+  + Single argument %
+  + Multiple args %1, %2, %3
+  + Variadic: %& for remaining args
+
+
+;; a function to invoke .length on arg
+
+#(.length %)
