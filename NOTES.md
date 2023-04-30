@@ -267,4 +267,218 @@
 
 ;; a function to invoke .length on arg
 
-#(.length %)
+> #(.length %)
+
+## Names and Namespaces
+
+### Namespaces in the REPL
+
++ in-ns switches to namespace
+  + Creates namespace if it doesn't exist
++ Argument is a symbol, must be quoted
++ REPL always starts in namespace "user"
+
+user => (in-ns 'foo.bar.baz)
+;;  => null'
+foo.bar.baz=>
+
+### Namespace Operations
+
++ Load:find source on classpath & eval it
++ Alias: make shorter name for namespace-qualified symbols
++ Refer: copy symbol bindings from another namespace into current namespace
++ Import: make java class names available in current namespace
+
+
+#### require
+
++ Loads the namespace if not already loaded
+  + Argument is a symbol, must be quoted
++ Have to refer to things with-fully-qualified names
+
+(require 'clojure.set)
+;;=> nil
+(clojure.set/union #{1 2} #{2 3 4})
+;=> #{ 1 2 3 4 }
+
+
+#### require : as
+
++ Loads the namespace if not already loaded
+  + Argument is a vector, must be quoted
++ Aliases the namespace to alternate name
+
+(require '[clojure.set :as set])
+;;=> null
+;; 'set' is an alias for 'clojure.set'
+(set/union #{1 2} #{3 4})
+;=> #{1 2 3 4}
+
+
+#### Use
+
++ Loads the namespaces if not already loaded
+  + Argument is a symbol, must be quoted
++ Refer all symbols into current namespace
++ Warns when symbols clash
++ Not recommended except for REPL exploration
+
+
+
+(use 'clojure.string)
+;; warning
+
+(reverse "Hello")
+
+
+#### use :only
+
++ Loads the namespace if not already loaded
+  + Argument is a vector, must be quoted
++ Refers only specified symbols into current namespace
+
+(use '[clojure.string : only (join)])
+(join "," [1 2 3])
+;; => "1,2,3"
+
+
+(user 'clojure.java.io)
+(ns-publics 'clojure.java.io)
+(keys(ns-publics 'clojure.java.io))
+(dir clojure.java.io)
+
+(user '[clojure.string :only (join)])
+(join "," ["a" "b"])
+;; "a,b"
+
+
+#### Reloading Namespaces
+
++ By default, namespaces are loaded only once
++ use and require take optional flags to force reload
+
+(require 'foo.bar :reload)
+
+(require 'foo.bar :reload-all')
+
+
+#### Import
+
++ Makes java classes available w/o package prefix in current namespace
+  + Argument is a list, quoting is optional
++ Does not support aliases/renaming
++ Does not support Java's import *
+
+
+(import (java.io FileReader File))
+(FileReader. (File, "readme.txt"))
+
+
+#### Namespaces and Files
+
++ For require/use to work, have to find code defining namespace
++ Clojure converts namespace name to path and look on CLASSPATH
+  + Dots in namespace name become /
+  + Hyphens become underscores
++ Idiomatic to define namespace per file
+
+
+#### na Declaration
+
++ Creates namespace and loads, aliases what you need
+  + At top of file
++ Refers all of clojure.core
++ Imports all of java.lang
+
+
+;; in file foo/bar/baz_quux.clj
+(ns foo.bar.baz-quus)
+
+
+#### ns: require
+
++ Loads other namespace with optional alias
+  + Arguments are not quoted
+
+(ns my.coo.project
+    ( :require [some.ns.foo : as foo]))
+(foo/function-in-foo)
+
+
+#### ns: use
+
++ Loads other namespace and refers symbols into namespace
+  + Arguments are not quoted
+
+(ns my.coo.project
+    (use [some.ns.foo :only [bar baz]]))
+(bar) ;;=> (some.ns.foo/bar)
+
+
+
+#### ns :import
+
++ Loads java library and refers symbols into namespace
+  + Arguments are not quoted
+
+(ns ny.cool.project
+    (:import (java.io File Writer))
+)
+File ;;=> java.io.File
+
+
+#### ns Complete Example
+
+(ns name
+    (:require [some.ns.foo :as foo]
+              [other.ns.bar :as bar])
+    (:use [this.ns.baz :only (a b c)]
+          [this.ns.quux :only (d e f)])
+    (:import (java.io File FileWriter)
+             (java.net URL URI)))
+
+
+(ns namespace-example
+    (:require (clojure.set :as s))
+    (:use [clojure.java.io :only (delete-file)])
+)
+
+(defn do-union [& sets]
+    (apply s/union sets)
+)
+
+(defn elete-old-files [& files]
+    (doseq [f files]
+        (delete-file f )))
+
+> *user=> ns* ;; to see what namespace current using
+
+
+### Private Vars
+
++ Add ^:private metadata to a definition
+  + defn- is shoutcut for defn ^:private
++ Prevents automatic refer with use
++ Prevents acciental reference by qualified symbol
++ Not truly hidden: can work around
+
+
+#### the-ns
+
++ Namespaces are first class objects
++ But their names are not normal symbols
+
+(clojure.core)
+(the-ns 'clojure.core)
+
+
+#### Namespace Introspection
+
++ ns-name : namespace name, as a symbol
++ ns-map: map of all symbols
+  + ns-interns: only defd Vars
+  + ns-publics: only public Vars
++ ns-imports: only imported classes
++ ns-refers : only Vars from other namespaces
++ ns-aliases : map of all alias
++ clojure.repl/dir : print public Vars
