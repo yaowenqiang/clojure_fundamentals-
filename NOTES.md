@@ -482,3 +482,128 @@ File ;;=> java.io.File
 + ns-refers : only Vars from other namespaces
 + ns-aliases : map of all alias
 + clojure.repl/dir : print public Vars
+
+## collections
+
+
+Wisdom of the Ancients
+
+"It is better to have 100 functions operate on one data structure than to have 10 functions operate on 10 data structure." - Alan.J.Perlis
+
+### Working With Data
+
+
++ Clojure provides  extensive facilities for representing and manipulating data
++ Small number of data structures
++ Seq abstraction common across data structure & more
++ Large library of functions across all of them
+
+### Immutability
+
++ The values of simple types are immutable
+  + 4,0.5,true
++ In Clojure , the values of compound data structure are immutable too
+  + Key to Clojure's concurrency model
++ Code never changes values, generates new ones to refer to instead
++ Persistent data structures ensure this is efficient in time and space
+
+### Persistent Data Structures
+
++ New values built from old values + modifications
++ New values are not full copies
++ New value and old value are both available after 'changes'
++ Collection maintains its performance guarantees for most operations 
++ All Clojure data structures are persistent
+
+### Concrete Data Structures
+
++ Sequential
+  + List , Vector
++ Associative
+  + Map, Vector
++ Both types support declarative destructuring
+
+
+#### Lists
+
++ Singly-linked lists
++ Prepend: O(1)
++ Lookup: O(1) at head, O(n) anywhere else
+
+
+()
+(1 2 3)
+(list 1 2 3)
+'(1 2 3)'
+(conj '(2 3) 1')
+
+
+#### Vectors
+
++ Indexed, random-access, array-like
++ Append: O(1)
++ Lookup: O(1)
+
+[]
+[1 2 3]
+(vector 1 2 3)
+(vec '(1 2 3)')
+(nth [1 2 3] 0)
+(conj [1 2] 3)
+
+[1 2 (+ 1 2)]
+'[1 2 (+ 1 2)]
+(def lst '[1 2 3])
+
+
+### Maps
+
++ Kye => value, hash table, dictionary
++ Insert and lookup: O(1)
++ Unordered
+
+
+{}
+
+{:a 1 :b 2}
+(:a {:a 1 :b 2})
+({:a 1 :b 2} :a)
+(assoc {:a 1 :b 2})
+(dissoc {:a 1} :a)
+(conj {} {: a 1})
+
+
+#### Nest Access
+
++ Helper functions access data via path specified by keys
+
+(def jdoe {:name "Jone Doe", :address {:zip 27705}})
+(get-in jode [:address :zip])
+(get jode :name "default name")
+(assoc-in jode [:address :zip] 27521)
+(assoc jode :age 22)
+(update-in jdoe [:address :zip] inc)
+
+
+### sets
+
++ Set of distinct values
++ Insert: O(1)
++ Member?: O(1)
++ Unordered
+
+
+
+> #{}
+> #{:a :b}
+> (#{:a :b} :a)
+> (conj #{} :a)
+> (contains? #{:a} :a)
+
+
+#### clojure.set Examples
+
+(require '[clojure.set :as set]')
+(set/union #{:a} #{:b})
+(set/difference #{:a :b} #{:a})
+(set/intersection #{:a :b} #{:b :c})
