@@ -697,3 +697,113 @@ Wisdom of the Ancients
                      :or {x 0 y 0 z 0}}]
     [x y z])
 
+
+## Sequences
+
+### Sequences
+
++ Abstraction for representing iteration
++ Backed by a data structure  or a function
+  + can be lazy and/or'infinite'
++ Fundation for large library of functions
+
+
+### Sequence API
+
++ (seq coll)
+  + if collection is non-empty, return seq object on it else, nil
+  + Can't recover input source from seq
++ (first coll)
+  + Returns the first element
++ (rest coll)
+  + Returns a sequence of the rest of the element
++ (cons x coll)
+  + Returns a new sequence first is x, rest is coll
+
+### Sequences Over Structures
+
++ Can treat any Clojure data structure as a seq
+  + Associative structures treated as sequence of paires
+
+(def a-list '(1 2 3 )') ;=>  #'user/-alist'
+
+### Sequences Over Functions
+
++ Can map a generator function to a seq
++ Seq is lazy, can be infinite
+  + Can process more then  fits in memory
+
+
+(def a-range (range 1 4)) ;>; #'user/a-range'
+
+
+### Sequences in the REPL
+
++ REPL always print sequences with parens
+  + But it's not a list!
++ infinite sequences take a long time to print
+
+
+(set! *print-length* 10); only print 10 things
+
+
+### Sequences Library
+
++ Generators
+  + list, vector, map, SQL ResultSet, Stream, Directory, Iterator, XML...
++ Operations
+  + map, filter, reduce, count, some, replace ...
++ generators * Operators = Power!
+
+
+#### Create a Sequence
+
+(seq [1 2 3])
+(range) ;=> (0 1 2 ... infinite)
+(ragne 3 ) ;=> (0 1 2)
+(range 1 7 2) ;=> (1 3 5)
+(iterate #(* 2 %) 2) ;=> (2 4 8 16 ... infinite)
+(re-seq #"[aeiou]" "clojure") ;=> ("o" "u" "e')
+
+
+#### Seq in, Seq out
+
+(take 3 (range))
+(drop 3 (range))
+(map #(* %%) [0 1 2 3])
+(filter een? (range))
+(apply str (interpose "," (range 3)))
+
+#### Using a Seq
+
+(reduce + (range 4))
+(reduce + 10 (range 4))
+(into #{} "hello")
+{into {} [[:x 1] [:y 2]]}
+(some {2 :b 3 :c} [1 nil 2 3])
+
+;; fibnacci sequences
+
+(iterate (fn [[ a b ]]
+    [b (+ a b)])
+    [0 1]
+)
+
+(def fibs
+  (map first 
+    (iterate (fn [[ a b ]]
+    [b (+ a b)])
+    [0 1])))
+
+(take 5 fibs)
+(map inc (take 5 fibs))
+
+
+
+### Adopting the Sequence Mindset
+
++ Sequence library surface space is big
++ Most things you want to do are in there somewhere
++ If you find yourself explicitly iterating, look for a function
++ The Clojure Cheatsheet helps
++ https://clojure.org/cheatsheet
