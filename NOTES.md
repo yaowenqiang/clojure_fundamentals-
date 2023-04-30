@@ -607,3 +607,93 @@ Wisdom of the Ancients
 (set/union #{:a} #{:b})
 (set/difference #{:a :b} #{:a})
 (set/intersection #{:a :b} #{:b :c})
+
+## Destructuring
+
++ Declarative way to pull apart compound data
+  + vs explicit, verbose access
++ Works for both sequential and associative data structure
++ Nests for deep, arbitrary access
+
+
+### Where You Can Destructure
+
++ Destructuring works in fn adn defn params, let bindings
+  + Adn anything built on top of them
+
+#### Sequential Destructuring
+
++ Provide vector of symbols to bind by position
+  + Bind to nil if there's no data
+
+
+(def stuff [7 8 9 10 11])
+(let [[a b c] stuff]
+    (list (+ a b) (+ b c)))
+
+
++ Can get *everything else* with &
+  + value is a sequence
+
+(def stuff [7 8 9 10 11])
+(let [[a & others] stuff]
+    (println a)
+    (println others))
+
++ Idionmatic to use _ for values you don't care about
+
+
+(def stuff [7 8 9 10 11])
+(let [[_ & others] stuff]
+    (println others))
+
+(defn rest-names [[_ & rest-names]]
+    rest-names
+)
+
+
+### Associative Destructuring
+
++ Provide map of symbols to bind by key
+  + Bind to nil if there no value
+
+
+(def m {:a 7 :b 4})
+(let [{a :a b :b} m]
+    (a b))
+
++ Keys can be inferred from vector of symbols to bind
+
+(def m {:a 7 :b 4})
+(let [{:keys [a b]} m]
+    [a b])
+
++ Use :or to provide default value for bound keys
+
+
+(def m {:a 7 :b 4})
+(let [{:keys [a b c]
+       :or {c 3}} m]
+    [a b c])
+
+
+### Named Arguments
+
++ Applying vector of keys to & binding emulated named args
+
+
+(defn game [planet & {:keys [human-players computer-players]}]
+    (println "Total players:" (+ human-players computer-players)))
+
+(game "Mars" :human-players 1 :computer-players 2)
+;; Total players 3
+
+
+(defn draw-point [& {x :x y :y}]
+    [x y])
+
+
+(defn draw-point [& {:keys [x y z]
+                     :or {x 0 y 0 z 0}}]
+    [x y z])
+
