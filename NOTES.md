@@ -807,3 +807,103 @@ Wisdom of the Ancients
 + If you find yourself explicitly iterating, look for a function
 + The Clojure Cheatsheet helps
 + https://clojure.org/cheatsheet
+
+
+## Flow Control
+
+### Statements vs. Expression in Java
+
+String s;
+
+// if is a statement, because it doesn't return a value;
+if (x > 10) {
+    s = "greater";j
+} else {
+    s = "greater or equal";
+}
+
+obj.someMethod(s);
+
+// Ternary operator is an expression, it returns a value;
+obj.someMethod(x > 10 ? "greater" : "greater or equal");
+
+
+### Expressions in Clojure
+
++ Everything in Clojure is an expression
+  + Always returns a value
+  + A block of multiple expressions returns the last value
+    + E.g, let, do, fn
+  + Expressions exclusively for side-effects return nil
+
+### Flow Control Expressions
+
++ Flow control operators are expressions too
++ Composable, can use them any where
+  + Fewer intermediate variables
++ Extensible, via macros
+  + E.g, when-let
+
+
+#### Truthiness
+
+(if true :truth :falsey)
+;;=> :truthy
+(if (Object.) :truthy :falsey) ; objects are true
+;; => :truthy
+(if [] :truthy :falsey) ; empty collections are true
+;; => :truthy
+(if false :truthy :falsey)
+;;=> :falsey
+
+(if nil : truthy :falsey) ; nil is false
+;;=> :falsey
+(if (seq []) :truthy :falsey) ; seq on empty coll is nil
+;; => :falsey
+
++ Be careful with Boolean objects!
+
+(if Boolean/False :truthy :falsey)
+;;=> :falsey
+(def evil-false (Boolean, False))
+;;=> #user/evil-false
+(= evil-false false)
+;;=> true
+(if evil-false :truthy :falsey)
+;;=> :truthy ; !?!!
+
+
+#### if
+
+(str "2 is " (if (even? 2) "even" "odd"))
+(if (true? false) "impossible!")
+;;=> nil
+
+#### if/do
+
++ multiple expressions per branch
++ Last value in branch returned
+
+(if (even? 5)
+    (do (println "even") 
+    true)
+    (do (println "odd") 
+    false));; false
+;; odd
+
+#### if-let
+
++ Often want let as if branch, instead of do
++ if-let combines the forms
++ Only one binding from allowed, tested for truthiness
+
+(if-let [x (even? 3)]
+    (println x)
+    (println  "some odd value")
+)
+
+(defn show-evens [coll]
+    (if-let [evens (seq (filter even? coll))]
+        (println (str "Then even are "  evens))
+        (println "There were no evens ")
+    ))
