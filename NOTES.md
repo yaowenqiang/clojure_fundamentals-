@@ -907,3 +907,201 @@ obj.someMethod(x > 10 ? "greater" : "greater or equal");
         (println (str "Then even are "  evens))
         (println "There were no evens ")
     ))
+#### cond
+
++ Series of tests and expression
++ :else  expression is optional
+
+(cond
+    test1 expression 1
+    test2 expression 2
+    ...
+    :else else-expression)
+
+
+(let [x 5]
+    (cond
+        (< x 2) "x is less then 2"
+        (< x 10) "x is less than 10"
+    )
+)
+;;=> "x is less then 10"
+
+
+(let [x 5]
+    (cond
+        (< x 2) "x is less then 2"
+        (< x 10) "x is less than 10"
+        : else "x is greater than or equal to 10"
+    )
+)
+
+#### condp
+
+
+(defn foo [x]
+    (condp = x
+    5 "x is 5"
+    10 "x is 10"
+    "x isn't 5 or 10"
+    )
+)
+
+(foo 11)
+
+
+#### case
+
++ Predicate always =
++ Test-values ust be compile-time literals
++ Match is O(1)
++ Else-expression has no test value
+
+(defn foo [x]
+    (case x
+        1 "x is 5"
+        10 "x is 10"
+        "x isn't 5 or 10"
+    )
+)
+
+
+### Recursion and iteration
+
++ Closure provides loop and the sequence abstraction
++ loop is "classic" recursion
+  + Closed to consumers, lower-level
++ Sequences represent iteration as values
+  + Consumers can partially iterate
+
+#### doseq
+
++ iterates over a sequence
+  + Similar to Java's foreach loop
++ If a lazy sequence, doseq forces evaluation
+
+(doseq [n (range 3)]
+    (println n)
+)
+
+#### doseq with multiple bindings
+
++ Similar to nested foreach loops
++ Processes all permutations of sequence content
+
+#### dotimes
+
++ Evaluate expression in times
+
+(dotimes [i 3]
+    (println i)
+)
+
+
+####  wile
+
++ Evaluate expression while condition is true
+
+(while (.accept socket)
+    (handle socket)
+)
+
+#### Clojure's for
+
++ List comprehension, NOT a for-loop
++ Generator function for sequence permutation
+
+(for [x [0 1]
+      y [0 1] ]
+      [x y])
+
+#### loop/recur
+
++ Functional looping construct
+  + loop defines bindings
+  + recur re-executs loop with new bindings
++ Prefer higher-order library fns
+(loop [i 0]
+    (if (< i 10)
+    (recur (inc i))
+    i))
+
+#### defn/recur
+
++ fn arguments are bindings
+
+(defn increase [i]
+    (if (< i 10)
+        (recur (inc i))
+    i))
+(increase 1)
+
+
+#### recur for recursion
+
++ recur must be in "tail position"
+  + The last expression in a branch
++ recur must provide values for all bound symbol by position
+  + loop bindings
+  + defn/fn args
++ Recursion via recur does not consume stack
+
+
+
+(defn factorial
+    ([n] (factorial 1 n))
+    ([accum n]
+        (if (zero? n)
+        accum
+        (factorial (* accum n) (dec n))
+        )
+    )
+)
+
+
+(defn factorial
+    ([n] (factorial 1 n))
+    ([accum n]
+        (if (zero? n)
+        accum
+        (recur (* accum n) (dec n))
+        )
+    )
+) 
+(factorial 100) ;;=> stack overflow
+
+
+### Exception handling
+
++ try/catch/finally
+  + as in Java
+
+(try
+    (/ 2 1)
+    (catch ArithmetricException e
+        "divide by zero")
+    (finally
+        (println "cleanup")
+    )
+)
+
+
+### Throwing exceptions
+
+(try 
+    (throw (Exception. "something went wrong"))
+    (catch Exception e (.getMessage e))
+)
+
+
+### with-open
+
++ JDK7 introduces try-with-resources
++ Clojure provides with-open for similar purposes
+
+(require '[clojure.java.io :as io])
+(with-open [f (io/writer "/tmp/new")]
+    (.write f "some text")
+)
+
+
